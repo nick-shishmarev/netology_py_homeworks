@@ -34,8 +34,8 @@ class Student:
         num_grades = 0
 
         for course, grades in self.grades.items():
-            sum_grades = sum(grades)
-            num_grades = len(grades)
+            sum_grades += sum(grades)
+            num_grades += len(grades)
 
         return round(sum_grades / num_grades, 1)
 
@@ -85,8 +85,8 @@ class Lecturer(Mentor):
         num_grades = 0
 
         for course, grades in self.grades.items():
-            sum_grades = sum(grades)
-            num_grades = len(grades)
+            sum_grades += sum(grades)
+            num_grades += len(grades)
 
         return round(sum_grades / num_grades, 1)
 
