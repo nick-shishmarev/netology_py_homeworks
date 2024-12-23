@@ -9,10 +9,14 @@ class Student:
 
     def __str__(self):
         delimiter = '\n'
-        out_str = (f'Имя: {self.name}{delimiter}Фамилия: {self.surname}{delimiter}'
-            f'Средняя оценка за домашние задания: {self.avr_grade()}{delimiter}'
-            f'Курсы в процессе изучения: {", ".join(self.courses_in_progress)}{delimiter}' 
-            f'Завершенные курсы: {", ".join(self.finished_courses)}{delimiter}')
+        out_str = (f'Имя: {self.name}{delimiter}Фамилия: '
+                   f'{self.surname}{delimiter}'
+                   f'Средняя оценка за домашние задания: '
+                   f'{self.avr_grade()}{delimiter}'
+                   f'Курсы в процессе изучения: '
+                   f'{", ".join(self.courses_in_progress)}{delimiter}' 
+                   f'Завершенные курсы: {", ".join(self.finished_courses)}'
+                   f'{delimiter}')
         return out_str
 
     def __eq__(self, other):
@@ -41,9 +45,12 @@ class Student:
         if grade not in legal_grades:
             return 'Error'
 
-        # Студент может выставить оценку лектору, закрепленному за курсом, который студент изучает или уже окончил
-        if (isinstance(lecturer, Lecturer) and course in lecturer.courses_attached
-                and (course in self.courses_in_progress or course in self.finished_courses)):
+        # Студент может выставить оценку лектору, закрепленному за курсом,
+        # который студент изучает или уже окончил
+        if (isinstance(lecturer, Lecturer) and
+                course in lecturer.courses_attached and
+                (course in self.courses_in_progress or
+                 course in self.finished_courses)):
             if course in lecturer.grades:
                 lecturer.grades[course] += [grade]
             else:
@@ -67,8 +74,9 @@ class Lecturer(Mentor):
 
     def __str__(self):
         delimiter = '\n'
-        out_str = f'Имя: {self.name}{delimiter}Фамилия: {self.surname}{delimiter}' + \
-            f'Средняя оценка за лекции: {self.avr_grade()}{delimiter}'
+        out_str = (f'Имя: {self.name}{delimiter}Фамилия: '
+                   f'{self.surname}{delimiter}'
+                   f'Средняя оценка за лекции: {self.avr_grade()}{delimiter}')
         return out_str
 
     def avr_grade(self):
@@ -99,7 +107,9 @@ class Reviewer(Mentor):
         if grade not in legal_grades:
             return 'Error'
 
-        if isinstance(student, Student) and course in self.courses_attached and course in student.courses_in_progress:
+        if (isinstance(student, Student) and
+                course in self.courses_attached and
+                course in student.courses_in_progress):
             if course in student.grades:
                 student.grades[course] += [grade]
             else:
@@ -109,12 +119,14 @@ class Reviewer(Mentor):
 
     def __str__(self):
         delimiter = '\n'
-        out_str = f'Имя: {self.name}{delimiter}Фамилия: {self.surname}{delimiter}'
+        out_str = (f'Имя: {self.name}{delimiter}'
+                   f'Фамилия: {self.surname}{delimiter}')
         return out_str
 
 
 def avr_grade(person_lst, course_name):
-    # Расчет средней оценки по курсу, по всем студентам, изучающим курс, или лекторам, читающим курс
+    # Расчет средней оценки по курсу, по всем студентам,
+    # изучающим курс, или лекторам, читающим курс
     avr_grades = []
     for person in person_lst:
         if course_name in person.grades:
@@ -193,8 +205,9 @@ print('\nЛекторы:')
 print(lecturer_1)
 print(lecturer_2)
 
-# Задание №3.2: Реализуйте возможность сравнивать (через операторы сравнения) между собой лекторов по средней оценке
-# за лекции и студентов по средней оценке за домашние задания.
+# Задание №3.2: Реализуйте возможность сравнивать (через операторы сравнения)
+# между собой лекторов по средней оценке за лекции
+# и студентов по средней оценке за домашние задания.
 
 print('\nСравнение студентов:')
 print(f'{student_1.surname} == {student_2.surname}: {student_1 == student_2}')
@@ -203,24 +216,33 @@ print(f'{student_1.surname} <= {student_2.surname}: {student_1 <= student_2}')
 print(f'{student_1.surname} > {student_2.surname}: {student_1 > student_2}')
 print(f'{student_1.surname} >= {student_2.surname}: {student_1 >= student_2}')
 print('\nСравнение лекторов:')
-print(f'{lecturer_1.surname} == {lecturer_2.surname}, {lecturer_1 == lecturer_2}')
-print(f'{lecturer_1.surname} < {lecturer_2.surname}, {lecturer_1 < lecturer_2}')
-print(f'{lecturer_1.surname} <= {lecturer_2.surname}, {lecturer_1 <= lecturer_2}')
-print(f'{lecturer_1.surname} > {lecturer_2.surname}, {lecturer_1 > lecturer_2}')
-print(f'{lecturer_1.surname} >= {lecturer_2.surname}, {lecturer_1 >= lecturer_2}')
+print((f'{lecturer_1.surname} == {lecturer_2.surname}, '
+       f'{lecturer_1 == lecturer_2}'))
+print((f'{lecturer_1.surname} < {lecturer_2.surname}, '
+       f'{lecturer_1 < lecturer_2}'))
+print((f'{lecturer_1.surname} <= {lecturer_2.surname}, '
+       f'{lecturer_1 <= lecturer_2}'))
+print((f'{lecturer_1.surname} > {lecturer_2.surname}, '
+       f'{lecturer_1 > lecturer_2}'))
+print((f'{lecturer_1.surname} >= {lecturer_2.surname}, '
+       f'{lecturer_1 >= lecturer_2}'))
 
 # Задание №4: Реализуйте две функции:
-# 1. для подсчета средней оценки за домашние задания по всем студентам в рамках конкретного курса
-# (в качестве аргументов принимаем список студентов и название курса);
-# 2. для подсчета средней оценки за лекции всех лекторов в рамках курса (в качестве аргумента
-# принимаем список лекторов и название курса).
+# 1. для подсчета средней оценки за домашние задания по всем студентам в
+# рамках конкретного курса (в качестве аргументов принимаем список студентов
+# и название курса);
+# 2. для подсчета средней оценки за лекции всех лекторов в рамках курса
+# (в качестве аргумента принимаем список лекторов и название курса).
 #
-# Так как расчет средней оценки как студентов так и лекторов одинаков, он реализован одной функцией avr_grade()
+# Так как расчет средней оценки как студентов так и лекторов одинаков,
+# он реализован одной функцией avr_grade()
 
 students_list = [student_1, student_2]
-course = 'Git'
-print(f'\nСредняя оценка студентов за домашние задания по курсу {course}: {avr_grade(students_list, course)}')
+course_f = 'Git'
+print((f'\nСредняя оценка студентов за домашние задания по курсу {course_f}: '
+       f'{avr_grade(students_list, course_f)}'))
 
 lecturers_list = [lecturer_1, lecturer_2]
-course = 'Python'
-print(f'\nСредняя оценка лекторов за лекции по курсу {course}: {avr_grade(lecturers_list, course)}')
+course_f = 'Python'
+print((f'\nСредняя оценка лекторов за лекции по курсу {course_f}: '
+       f'{avr_grade(lecturers_list, course_f)}'))
