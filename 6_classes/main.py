@@ -30,34 +30,30 @@ class Student:
 
     def avr_grade(self):
         # Расчет средней оценки за домашние задания по всем курсам
-        sum_grades = 0
-        num_grades = 0
-
-        for course, grades in self.grades.items():
-            sum_grades += sum(grades)
-            num_grades += len(grades)
-
-        return round(sum_grades / num_grades, 1)
+        grades_total = [grade for grades in self.grades.values()
+                        for grade in grades]
+        return round(avr_calc(grades_total), 1)
 
     def rate_lectures(self, lecturer, course, grade):
         # Выставление студентом оценки лектору за лекцию
+        # Студент может выставить оценку из диапазона 1-10
         legal_grades = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
         if grade not in legal_grades:
-            return 'Error'
-
+            raise ValueError(f"Оценка {grade} не в диапазоне от 1 до 10.")
         # Студент может выставить оценку лектору, закрепленному за курсом,
         # который студент изучает или уже окончил
-        if (isinstance(lecturer, Lecturer) and
-                course in lecturer.courses_attached and
-                (course in self.courses_in_progress or
-                 course in self.finished_courses)):
-            if course in lecturer.grades:
-                lecturer.grades[course] += [grade]
-            else:
-                lecturer.grades[course] = [grade]
+        if not isinstance(lecturer, Lecturer):
+            raise ValueError("Ожидается объект класса Lecturer.")
 
-        else:
-            return 'Error'
+        if course not in lecturer.courses_attached:
+            raise ValueError(f"Лектор {lecturer.surname} "
+                             f"не ведет курс '{course}'")
+
+        if not course in self.courses_in_progress + self.finished_courses:
+            raise ValueError(f"Курс '{course}' "
+                             f"не найден у студента {self.surname}")
+
+        lecturer.grades.setdefault(course, []).append(grade)
 
 
 class Mentor:
@@ -81,14 +77,9 @@ class Lecturer(Mentor):
 
     def avr_grade(self):
         # Расчет средней оценки за лекции по всем курсам, которые читает лектор
-        sum_grades = 0
-        num_grades = 0
-
-        for course, grades in self.grades.items():
-            sum_grades += sum(grades)
-            num_grades += len(grades)
-
-        return round(sum_grades / num_grades, 1)
+        grades_total = [grade for grades in self.grades.values()
+                        for grade in grades]
+        return round(avr_calc(grades_total), 1)
 
     def __eq__(self, other):
         return self.avr_grade() == other.avr_grade()
@@ -105,23 +96,29 @@ class Reviewer(Mentor):
         # Выставление проверяющим оценки студенту по курсу
         legal_grades = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
         if grade not in legal_grades:
-            return 'Error'
+            raise ValueError(f"Оценка {grade} не в диапазоне от 1 до 10.")
 
-        if (isinstance(student, Student) and
-                course in self.courses_attached and
-                course in student.courses_in_progress):
-            if course in student.grades:
-                student.grades[course] += [grade]
-            else:
-                student.grades[course] = [grade]
-        else:
-            return 'Error'
+        if not isinstance(student, Student):
+            raise ValueError("Ожидается объект класса Student.")
+
+        if course not in self.courses_attached:
+            raise ValueError(f"Лектор {self.surname} не ведет курс '{course}'")
+
+        if course not in student.courses_in_progress:
+            raise ValueError((f"Студент {student.surname} "
+                              f"не изучает курс '{course}'"))
+
+        student.grades.setdefault(course, []).append(grade)
 
     def __str__(self):
         delimiter = '\n'
         out_str = (f'Имя: {self.name}{delimiter}'
                    f'Фамилия: {self.surname}{delimiter}')
         return out_str
+
+
+def avr_calc(grades):
+    return sum(grades) / len(grades) if grades else 0
 
 
 def avr_grade(person_lst, course_name):
@@ -246,3 +243,35 @@ lecturers_list = [lecturer_1, lecturer_2]
 course_f = 'Python'
 print((f'\nСредняя оценка лекторов за лекции по курсу {course_f}: '
        f'{avr_grade(lecturers_list, course_f)}'))
+
+student_3 = Student('No', 'One', '')
+print()
+print(student_3)
+lecturer_3 = Lecturer('Un', 'Known')
+print(lecturer_3)
+
+try:
+    reviewer_1.rate_hw(student_3, 'Python', 10)
+except Exception as e:
+    print(e)
+try:
+    reviewer_1.rate_hw(student_1, 'Art', 10)
+except Exception as e:
+    print(e)
+try:
+    reviewer_1.rate_hw(student_1, 'Python', 'Bad')
+except Exception as e:
+    print(e)
+try:
+    reviewer_1.rate_hw(student_1, 'Git', 10)
+except Exception as e:
+    print(e)
+
+try:
+    student_3.rate_lectures(lecturer_1, 'Python', 10)
+except Exception as e:
+    print(e)
+try:
+    student_1.rate_lectures(lecturer_1, 'Git', 10)
+except Exception as e:
+    print(e)
