@@ -1,5 +1,8 @@
 temp/
 mine/
 .idea/
+.venv/
 *.log
 *.tmp
+Thumbs.db
+
