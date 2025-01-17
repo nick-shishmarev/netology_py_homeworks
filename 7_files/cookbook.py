@@ -1,4 +1,4 @@
-class CookBook():
+class CookBook:
     def __init__(self):
         self.cook_book = {}
 
@@ -47,7 +47,6 @@ class CookBook():
 
             i += 1
         return 
-    
 
     def get_dish_ingredients(self, dish):
         # Получение ингредиента и его количества из словаря
@@ -56,26 +55,10 @@ class CookBook():
         for ingredient in dish_ingredients:
             result.append(
                 (ingredient['ingredient_name'],
-                ingredient['quantity'],
-                ingredient['measure'])
+                 ingredient['quantity'],
+                 ingredient['measure'])
             )
         return result
-
-
-def get_shop_list_by_dishes(cook_book, dishes, person_count):
-    # Формирование списка продуктов в виде словаря
-    dict_out = {}
-    for dish in dishes:
-        ingredients = cook_book.get_dish_ingredients(dish)
-        for ingredient, quantity, measure in ingredients:
-            if ingredient in dict_out:
-                dict_out[ingredient]['quantity'] += quantity * person_count
-            else:
-                dict_out[ingredient] = {
-                    'measure': measure,
-                    'quantity': quantity * person_count,
-                }
-    return dict_out
 
 
 def main():
@@ -107,6 +90,7 @@ def main():
                 }
     for k, v in dish_out.items():
         print(k, v)
+
 
 if __name__ == "__main__":
     main()
